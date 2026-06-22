@@ -1,0 +1,195 @@
+{
+	"name": "lua-region-enhancer",
+	"displayName": "Lua Region Enhancer",
+	"description": "Custom folding regions, enriched outline, minimap decorations, and AI-powered annotation for Lua files",
+	"version": "0.2.0",
+	"publisher": "KAFKA",
+	"engines": {
+		"vscode": "^1.90.0"
+	},
+	"extensionDependencies": [],
+	"extensionCapabilities": {
+		"untrustedWorkspaces": {
+			"supported": true
+		}
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onLanguage:lua"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "luaRegion.fullAnnotate",
+				"title": "Lua: 全文插入 Region 注释",
+				"category": "Lua Region"
+			},
+			{
+				"command": "luaRegion.showTaskGraph",
+				"title": "Lua: 显示任务拓扑图",
+				"category": "Lua Region"
+			}
+		],
+		"menus": {
+			"editor/context": [
+				{
+					"command": "luaRegion.fullAnnotate",
+					"when": "resourceLangId == lua",
+					"group": "1_modification@100"
+				}
+			]
+		},
+		"configuration": {
+			"title": "Lua Region Enhancer",
+			"properties": {
+				"luaRegion.regionMarkers": {
+					"type": "array",
+					"default": [
+						{
+							"start": "--#region",
+							"end": "--#endregion"
+						},
+						{
+							"start": "-- region",
+							"end": "-- endregion"
+						}
+					],
+					"items": {
+						"type": "object",
+						"required": [
+							"start",
+							"end"
+						],
+						"properties": {
+							"start": {
+								"type": "string",
+								"description": "Region 开始标记"
+							},
+							"end": {
+								"type": "string",
+								"description": "Region 结束标记"
+							}
+						}
+					},
+					"description": "Region 标记对，支持多组并存"
+				},
+				"luaRegion.outlineRules": {
+					"type": "array",
+					"default": [
+						{
+							"name": "Function",
+							"pattern": "^\\s*function\\s+([\\w\\.\\:]+)\\s*\\(",
+							"symbolKind": "Function"
+						},
+						{
+							"name": "Local Function",
+							"pattern": "^\\s*local\\s+function\\s+(\\w+)\\s*\\(",
+							"symbolKind": "Function"
+						},
+						{
+							"name": "Mission initTask",
+							"pattern": "^\\s*Mission\\.(\\w+):initTask",
+							"symbolKind": "Module",
+							"description": "任务主体"
+						},
+						{
+							"name": "Mission initPromote",
+							"pattern": "^\\s*Mission\\.(\\w+):initPromote",
+							"symbolKind": "Module",
+							"description": "任务接取"
+						},
+						{
+							"name": "Task ID",
+							"pattern": "^\\s*id\\s*=\\s*['\"]([\\w]+)['\"]",
+							"symbolKind": "EnumMember",
+							"description": "taskid"
+						}
+					],
+					"items": {
+						"type": "object",
+						"required": [
+							"name",
+							"pattern",
+							"symbolKind"
+						],
+						"properties": {
+							"name": {
+								"type": "string",
+								"description": "规则名称（仅用于标识）"
+							},
+							"pattern": {
+								"type": "string",
+								"description": "正则表达式，捕获组 1 为大纲显示的标签文本"
+							},
+							"symbolKind": {
+								"type": "string",
+								"enum": [
+									"File",
+									"Module",
+									"Namespace",
+									"Class",
+									"Method",
+									"Function",
+									"Variable",
+									"Constant",
+									"Key",
+									"Field",
+									"Object",
+									"Interface",
+									"String",
+									"EnumMember"
+								],
+								"description": "大纲图标类型"
+							},
+							"description": {
+								"type": "string",
+								"description": "大纲条目副标题（可选）"
+							}
+						}
+					},
+					"description": "自定义 Lua 符号匹配规则，匹配的行显示在大纲中，自动嵌套到所在 Region 下"
+				},
+				"luaRegion.minimapColors": {
+					"type": "array",
+					"default": [
+						"#4FC3F7",
+						"#81C784",
+						"#FFB74D",
+						"#F06292",
+						"#CE93D8",
+						"#80DEEA",
+						"#A5D6A7",
+						"#FFF176"
+					],
+					"items": {
+						"type": "string"
+					},
+					"description": "Minimap 区块着色颜色池（循环使用）"
+				},
+				"luaRegion.showGhostText": {
+					"type": "boolean",
+					"default": true,
+					"description": "是否在 Region 开始行末显示 Region 标题 ghost text"
+				},
+				"luaRegion.showMinimapColors": {
+					"type": "boolean",
+					"default": true,
+					"description": "是否在 Minimap、Overview Ruler 和编辑器代码块上显示 Region 颜色标记"
+				},
+				"luaRegion.regionBackgroundOpacity": {
+					"type": "number",
+					"default": 0.15,
+					"minimum": 0,
+					"maximum": 1,
+					"description": "Region 代码块背景色的透明度（0 = 完全透明，1 = 完全不透明），默认 0.15"
+				}
+			}
+		}
+	},
+	"devDependencies": {
+		"@vscode/vsce": "^3.9.2"
+	}
+}
