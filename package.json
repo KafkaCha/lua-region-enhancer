@@ -4,6 +4,11 @@
 	"description": "Custom folding regions, enriched outline, minimap decorations, and AI-powered annotation for Lua files",
 	"version": "0.2.0",
 	"publisher": "KAFKA",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/KafkaCha/lua-region-enhancer.git"
+	},
+	"license": "MIT",
 	"engines": {
 		"vscode": "^1.90.0"
 	},
