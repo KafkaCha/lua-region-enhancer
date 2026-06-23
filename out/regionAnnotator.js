@@ -50,9 +50,9 @@ const _titleCache = new Map(); // missionName → Map<id, title>
 function getTaskTitleMap(missionName) {
   if (_titleCache.has(missionName)) return _titleCache.get(missionName);
   const result = new Map();
-  _titleCache.set(missionName, result);
   const folders = vscode.workspace.workspaceFolders;
-  if (!folders) return result;
+  if (!folders) { _titleCache.set(missionName, result); return result; }
+  let loaded = false;
   for (const folder of folders) {
     const yamlPath = path.join(folder.uri.fsPath, '..', 'AutoGen', 'Config.yaml');
     if (!fs.existsSync(yamlPath)) continue;
@@ -79,9 +79,12 @@ function getTaskTitleMap(missionName) {
       if (curId && curParent === missionName && curTitle && curTitle.trim()) {
         result.set(curId, curTitle.trim());
       }
+      loaded = true;
     } catch (_) {}
     break;
   }
+  // 只在成功读取 Config.yaml 后才缓存，避免因路径异常缓存空结果
+  if (loaded) _titleCache.set(missionName, result);
   return result;
 }
 
